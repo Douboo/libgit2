@@ -5,6 +5,7 @@
  * a Linking Exception. For full terms see the included COPYING file.
  */
 
+#include "common.h"
 #include "posix.h"
 
 #include "path.h"

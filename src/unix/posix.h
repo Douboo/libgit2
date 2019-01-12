@@ -16,6 +16,7 @@
 #include <sys/param.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <regex.h>
 
 typedef int GIT_SOCKET;
 #define INVALID_SOCKET -1
@@ -89,8 +90,26 @@ GIT_INLINE(int) p_futimes(int f, const struct p_timeval t[2])
 # define p_futimes futimes
 #endif
 
+/*
+ * Regular expressions: if the operating system has p_regcomp_l,
+ * use it so that we can override the locale environment variable.
+ * Otherwise, use our bundled PCRE implementation.
+ */
+
+#define P_REG_EXTENDED REG_EXTENDED
+#define P_REG_ICASE REG_ICASE
+#define P_REG_NOMATCH REG_NOMATCH
+
+#define p_regex_t regex_t
+#define p_regmatch_t regmatch_t
+
+#define p_regerror regerror
+#define p_regexec regexec
+#define p_regfree regfree
+
 #ifdef GIT_USE_REGCOMP_L
 #include <xlocale.h>
+
 GIT_INLINE(int) p_regcomp(regex_t *preg, const char *pattern, int cflags)
 {
 	return regcomp_l(preg, pattern, cflags, (locale_t) 0);

@@ -61,6 +61,16 @@ extern struct tm * p_localtime_r(const time_t *timer, struct tm *result);
 extern struct tm * p_gmtime_r(const time_t *timer, struct tm *result);
 
 /* Use the bundled regcomp */
+#define P_REG_EXTENDED REG_EXTENDED
+#define P_REG_ICASE REG_ICASE
+#define P_REG_NOMATCH REG_NOMATCH
+
+#define p_regex_t regex_t
+#define p_regmatch_t regmatch_t
+
 #define p_regcomp regcomp
+#define p_regerror regerror
+#define p_regexec regexec
+#define p_regfree regfree
 
 #endif
