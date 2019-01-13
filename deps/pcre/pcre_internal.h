@@ -365,49 +365,6 @@ typedef int __assert_pcre_uchar32_size[sizeof(PCRE_UCHAR32) == 4 ? 1 : -1];
 need to have their names changed. PCRE must be compiled with the -DVPCOMPAT
 option on the command line. */
 
-#ifdef VPCOMPAT
-#define strlen(s)        _strlen(s)
-#define strncmp(s1,s2,m) _strncmp(s1,s2,m)
-#define memcmp(s,c,n)    _memcmp(s,c,n)
-#define memcpy(d,s,n)    _memcpy(d,s,n)
-#define memmove(d,s,n)   _memmove(d,s,n)
-#define memset(s,c,n)    _memset(s,c,n)
-#else  /* VPCOMPAT */
-
-/* To cope with SunOS4 and other systems that lack memmove() but have bcopy(),
-define a macro for memmove() if HAVE_MEMMOVE is false, provided that HAVE_BCOPY
-is set. Otherwise, include an emulating function for those systems that have
-neither (there some non-Unix environments where this is the case). */
-
-#ifndef HAVE_MEMMOVE
-#undef  memmove        /* some systems may have a macro */
-#ifdef HAVE_BCOPY
-#define memmove(a, b, c) bcopy(b, a, c)
-#else  /* HAVE_BCOPY */
-static void *
-pcre_memmove(void *d, const void *s, size_t n)
-{
-size_t i;
-unsigned char *dest = (unsigned char *)d;
-const unsigned char *src = (const unsigned char *)s;
-if (dest > src)
-  {
-  dest += n;
-  src += n;
-  for (i = 0; i < n; ++i) *(--dest) = *(--src);
-  return (void *)dest;
-  }
-else
-  {
-  for (i = 0; i < n; ++i) *dest++ = *src++;
-  return (void *)(dest - n);
-  }
-}
-#define memmove(a, b, c) pcre_memmove(a, b, c)
-#endif   /* not HAVE_BCOPY */
-#endif   /* not HAVE_MEMMOVE */
-#endif   /* not VPCOMPAT */
-
 
 /* PCRE keeps offsets in its compiled code as 2-byte quantities (always stored
 in big-endian order) by default. These are used, for example, to link from the
